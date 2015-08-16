@@ -16,7 +16,6 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	#   min.cohort.users: The minimum number of users who signed up in a cohort
 	#     in order to display it in the plot. Default is 20.
 	#   show.legend: Whether to show a legend on the plot. Default is TRUE.
-
 	if (! cohort.units %in% c("months", "years")) {
 		stop("cohort.units must be months or years")
 	}
@@ -148,6 +147,7 @@ LoadActivityData <- function(file, sep = ",", cohort.units) {
 	#   file: The path of the CSV file
 	#   sep: The separator used in the CSV file. Default is ",".
 	#   cohort.units: How to determine the cohorts: "months" or "years"
+	#
 	# Returns:
 	#   A data frame containg user.id, date, and cohort
 	cohort.format <- GetCohortFormat(cohort.units)
@@ -163,6 +163,7 @@ GetCohortFormat <- function(cohort.units) {
 	#
 	# Args:
 	#   cohort.units: How to determine the cohorts: "months" or "years"
+	#
 	# Returns:
 	#   A character string that determines how the date will be formatted
 	if (cohort.units == "months") {
@@ -177,6 +178,7 @@ GetUserSignupCohorts <- function(activities) {
 	#
 	# Args:
 	#   activities: The data frame of activities containing user.id and cohort
+	#
 	# Returns:
 	#   A data frame containing the signup cohort for each user id
 	aggregate(cohort ~ user.id, activities, min)
@@ -188,6 +190,7 @@ GetDaysRetained <- function(target.user.id, activities) {
 	# Args:
 	#   target.user.id: The id of the user we want to analyze
 	#   activities: A data frame containing user ids and activity dates
+	#
 	# Returns:
 	#   A vector containing how many days after signup a user was retained
 	user.activities <- subset(activities, user.id == target.user.id, "date")
