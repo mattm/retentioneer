@@ -31,11 +31,13 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 
 	# We'll use the file's modified date when determining whether the users in
 	# each cohort have enough data to display in the chart
-	file.mdate <- as.Date(file.info(file)$mtime)
+	file.mdate <- as.POSIXct(file.info(file)$mtime)
 
-	activities <- LoadActivityData(file, sep, cohort.units)
+	activities <<- LoadActivityData(file, sep, cohort.units)
+	print(head(activities))
+	print(tail(activities))
 	users <- GetUserSignupCohorts(activities)
-	signup.cohorts <- sort(unique(users$cohort))
+	signup.cohorts <- tail(sort(unique(users$cohort)), n = 4)
 
 	retention.cohorts <- vector()
 	retention.days.retained <- vector()
@@ -53,9 +55,9 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 		}
 
 		if (cohort.units == "months") {
-			cohort.date <- as.Date(paste(signup.cohort, "01", sep = "-"))
+			cohort.date <- as.POSIXct(paste(signup.cohort, "01", sep = "-"))
 		} else if (cohort.units == "years") {
-			cohort.date <- as.Date(paste(signup.cohort, "01", "01", sep = "-"))
+			cohort.date <- as.POSIXct(paste(signup.cohort, "01", "01", sep = "-"))
 		}
 
 		possible.activities <- subset(activities, date >= cohort.date)
@@ -112,7 +114,7 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 
 	# Remove rows that don't have full data due to the CSV file being created
 	# less than n days since the user signed up
-	retention.data <- retention.data[complete.cases(retention.data), ]
+	retention.data <<- retention.data[complete.cases(retention.data), ]
 
 	# Add a column showing the retention rate for each day within each cohort
 	cohorts.initial <- aggregate(users.retained ~ cohort, retention.data, max)
@@ -137,8 +139,8 @@ LoadActivityData <- function(file, sep = ",", cohort.units) {
 	#   A data frame containg user.id, date, and cohort
 	cohort.format <- GetCohortFormat(cohort.units)
 	activities <- read.csv(file, sep = sep,
-		col.names = c("user.id", "date"), header = FALSE)
-	activities$date <- as.Date(activities$date)
+		col.names = c("user.id", "timestamp"), header = FALSE)
+	activities$date <- as.POSIXlt(activities$timestamp, origin = "1970-01-01")
 	activities$cohort <- format(activities$date, cohort.format)
 	activities
 }
@@ -219,4 +221,5 @@ PlotRetentionByCohort <- function(retention.data, show.legend) {
 	print(g)
 }
 
-AnalyzeRetention("data/test-data.csv", sep = "\t", cohort.units = "months")
+AnalyzeRetention("data/preceden-timestamps.csv", sep = "\t",
+	cohort.units = "months")
