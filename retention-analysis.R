@@ -1,6 +1,6 @@
 library("ggplot2")
 
-kSecondsPerDay <- 84600
+kSecondsPerDay <- 60 * 60 * 24
 
 AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	min.cohort.users = 20, show.legend = TRUE) {
