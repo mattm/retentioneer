@@ -1,5 +1,7 @@
 library("ggplot2")
 
+kSecondsPerDay <- 84600
+
 AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	min.cohort.users = 20, show.legend = TRUE) {
 	# Analyzes a CSV file of user activities and plots the retention over time
@@ -34,17 +36,20 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	file.mdate <- as.POSIXct(file.info(file)$mtime)
 
 	activities <<- LoadActivityData(file, sep, cohort.units)
-	print(head(activities))
-	print(tail(activities))
 	users <- GetUserSignupCohorts(activities)
-	signup.cohorts <- tail(sort(unique(users$cohort)), n = 4)
+	signup.cohorts <- sort(unique(users$cohort))
 
 	retention.cohorts <- vector()
 	retention.days.retained <- vector()
 	retention.users.retained <- vector()
 
+	# Display a progress bar while the analysis is taking place
+	progress.bar <- txtProgressBar(min = 0, max = length(signup.cohorts),
+		style = 3)
+
 	# Determine the n-day retention for each signup month
-	for (signup.cohort in signup.cohorts) {
+	for (i in 1:length(signup.cohorts)) {
+		signup.cohort <- signup.cohorts[i]
 		signup.user.ids <- users[users$cohort == signup.cohort, "user.id"]
 
 		# Some cohorts, such as those when the the service went into private
@@ -74,10 +79,10 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 			# convert the number of days into characters first
 			key <- DayToKey(day)
 
-			if (cohort.date + day >= file.mdate) {
-				# There is a small issue here that's worth mentioning: when analyzing
-				# yearly cohorts, users who signed up recently will still be counted
-				# even if it hasn't been the full n-days.
+			if (cohort.date + kSecondsPerDay * day >= file.mdate) {
+				# If none of the users in the cohort have had an opportunity to be
+				# retained for n days as of the time of the activity export, then
+				# don't display zero-retention on the chart for that retention period
 				retention.counts[[key]] <- NA
 			} else {
 				retention.counts[[key]] <- 0
@@ -104,7 +109,12 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 			retention.days.retained <- c(retention.days.retained, day)
 			retention.users.retained <- c(retention.users.retained, users.retained)
 		}
+
+		# Display the progress
+		setTxtProgressBar(progress.bar, i)
 	}
+
+	close(progress.bar)
 
 	# Now that we've collected all of the data, combine it into a single data
 	# frame that we can then pass to ggplot
@@ -114,12 +124,15 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 
 	# Remove rows that don't have full data due to the CSV file being created
 	# less than n days since the user signed up
-	retention.data <<- retention.data[complete.cases(retention.data), ]
+	retention.data <- retention.data[complete.cases(retention.data), ]
 
 	# Add a column showing the retention rate for each day within each cohort
 	cohorts.initial <- aggregate(users.retained ~ cohort, retention.data, max)
 	retention.data$retention.rate <- (retention.data$users.retained /
 		cohorts.initial[retention.data$cohort, "users.retained"]) * 100
+
+	# Make this available in the parent environment for additional analysis
+	retention.data <<- retention.data
 
 	# Print the data for you to explore
 	print(retention.data)
