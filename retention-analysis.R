@@ -36,7 +36,7 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	# each cohort have enough data to display in the chart
 	file.mdate <- as.POSIXct(file.info(file)$mtime)
 
-	activities <<- LoadActivityData(file, sep, cohort.units)
+	activities <- LoadActivityData(file, sep, cohort.units)
 	users <- GetUserSignupCohorts(activities)
 	signup.cohorts <- sort(unique(users$cohort))
 
@@ -119,7 +119,7 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 
 	# Now that we've collected all of the data, combine it into a single data
 	# frame that we can then pass to ggplot
-	retention.data <<- data.frame(cohort = retention.cohorts,
+	retention.data <- data.frame(cohort = retention.cohorts,
 		days.retained = retention.days.retained,
 		users.retained = retention.users.retained)
 
