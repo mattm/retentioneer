@@ -3,7 +3,7 @@ library("ggplot2")
 kSecondsPerDay <- 60 * 60 * 24
 
 AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
-	min.cohort.users = 20, show.legend = TRUE) {
+	min.cohort.users = 20, show.legend = TRUE, avg.only = FALSE) {
 	# Analyzes a CSV file of user activities and plots the retention over time
 	#
 	# Args:
@@ -16,6 +16,8 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	#   min.cohort.users: The minimum number of users who signed up in a cohort
 	#     in order to display it in the plot. Default is 20.
 	#   show.legend: Whether to show a legend on the plot. Default is TRUE.
+	#   avg.only: Whether or not to just plot the average retention rate for the
+	#     all of the data regardless of signup cohort. Default is FALSE.
 	if (! cohort.units %in% c("months", "years")) {
 		stop("cohort.units must be months or years")
 	}
@@ -126,9 +128,17 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	retention.data <- retention.data[complete.cases(retention.data), ]
 
 	# Add a column showing the retention rate for each day within each cohort
-	cohorts.initial <- aggregate(users.retained ~ cohort, retention.data, max)
-	retention.data$retention.rate <- (retention.data$users.retained /
-		cohorts.initial[retention.data$cohort, "users.retained"]) * 100
+	if (avg.only) {
+		retention.data <- aggregate(users.retained ~ days.retained,
+			retention.data, sum)
+		day.zero.counts <- max(retention.data$users.retained)
+		retention.data$retention.rate <- (retention.data$users.retained /
+			day.zero.counts) * 100
+	} else {
+		cohorts.initial <- aggregate(users.retained ~ cohort, retention.data, max)
+		retention.data$retention.rate <- (retention.data$users.retained /
+			cohorts.initial[retention.data$cohort, "users.retained"]) * 100
+	}
 
 	# Make this available in the parent environment for additional analysis
 	retention.data <<- retention.data
@@ -137,7 +147,11 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	print(retention.data)
 
 	# Finally, plot the retention data
-	PlotRetentionByCohort(retention.data, show.legend)
+	if (avg.only) {
+		PlotAverageRetention(retention.data)
+	} else {
+		PlotRetentionByCohort(retention.data, show.legend)
+	}
 }
 
 LoadActivityData <- function(file, sep = ",", cohort.units) {
@@ -234,6 +248,27 @@ PlotRetentionByCohort <- function(retention.data, show.legend) {
 	}
 
 	# Call print so that the g is rendered in RStudio
+	print(g)
+}
+
+PlotAverageRetention <- function(retention.data) {
+	# Plots the average retention rate for the data
+	#
+	# Args:
+	#   retention.data: A data frame containing days.retained and retention.rate
+	g <- ggplot(retention.data,
+		aes(x = days.retained, y = retention.rate))
+	g <- g + geom_line(size = 1.5, color = "#5BB5E6")
+	g <- g + labs(x = "Days Retained", y = "Percentage Retained")
+	g <- g + ggtitle("Retention by Sign Up Cohort")
+	g <- g + theme(plot.title = element_text(lineheight = 1.2, face = "bold",
+		size = rel(1.5)))
+	g <- g + theme(axis.ticks = element_blank())
+	g <- g + theme(plot.background = element_rect(fill = "#F6F8FA"))
+	g <- g + theme(panel.background = element_blank())
+	g <- g + theme(panel.grid.major = element_line(color = "#DDDDDD",
+		size = 0.2))
+
 	print(g)
 }
 
