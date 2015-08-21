@@ -66,6 +66,8 @@ If you'd prefer to see the average retention rate across all of the cohorts, you
 6             30            381       5.132004
 ```
 
+![retention chart by month](images/test-data-average.png)
+
 For any of these you can also adjust which days to analyze retention for by supplying a `days` argument like so (the default is 1, 5, 10, 20, 30, 40, 50, 60, 70, 80, and 90 days after the user was first seen):
 
 `AnalyzeRetention("data/test-data.csv", cohort.units = "months", days = c(10, 20, 30))`

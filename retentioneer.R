@@ -273,4 +273,4 @@ PlotAverageRetention <- function(retention.data) {
 	print(g)
 }
 
-AnalyzeRetention("data/test-data.csv", avg.only = TRUE)
+AnalyzeRetention("data/test-data.csv", cohort.units = "months", show.legend = FALSE)
