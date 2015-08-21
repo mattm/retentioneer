@@ -20,6 +20,7 @@ In order for the script to work, all you need to do is to generate a CSV file co
 3,1264959922
 4,1264959038
 4,1286368585
+...
 ```
 
 The provided `data/test-data.csv` contains a test dataset that you can use to test the script.
@@ -44,7 +45,6 @@ Which will generate output the following retention table:
 8  2010-02            90             22      4.5738046
 9  2010-03             0           2742    100.0000000
 10 2010-03             1            562     20.4959883
-...
 ...
 ```
 
