@@ -33,14 +33,18 @@ If all went well, it will run the following code at the bottom of the file to an
 Which will generate output the following retention table:
 
 ```
-     cohort days.retained users.retained retention.rate
-1   2010-02             0            481    100.0000000
-2   2010-02             1             72     14.9688150
-3   2010-02             5             65     13.5135135
-4   2010-02            10             41      8.5239085
-5   2010-02            20             34      7.0686071
-6   2010-02            30             30      6.2370062
-7   2010-02            40             29      6.0291060
+    cohort days.retained users.retained retention.rate
+1  2010-02             0            481    100.0000000
+2  2010-02             1             72     14.9688150
+3  2010-02             3             68     14.1372141
+4  2010-02             7             60     12.4740125
+5  2010-02            14             37      7.6923077
+6  2010-02            30             30      6.2370062
+7  2010-02            60             27      5.6133056
+8  2010-02            90             22      4.5738046
+9  2010-03             0           2742    100.0000000
+10 2010-03             1            562     20.4959883
+...
 ...
 ```
 
@@ -61,13 +65,15 @@ If you'd prefer to see the average retention rate across all of the cohorts, you
 `AnalyzeRetention("data/test-data.csv", avg.only = TRUE)`
 
 ```
-   days.retained users.retained retention.rate
-1              0           7424     100.000000
-2              1           1126      15.167026
-3              5            709       9.550108
-4             10            529       7.125539
-5             20            433       5.832435
-6             30            381       5.132004
+  days.retained users.retained retention.rate
+1             0           7424     100.000000
+2             1           1126      15.167026
+3             3            853      11.489763
+4             7            616       8.297414
+5            14            488       6.573276
+6            30            381       5.132004
+7            60            276       3.717672
+8            90            213       2.869073
 ```
 
 ![retention chart by month](images/test-data-average.png)
