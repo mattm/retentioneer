@@ -24,17 +24,13 @@ In order for the script to work, all you need to do is to generate a CSV file co
 
 The provided `data/test-data.csv` contains a test dataset that you can use to test the script.
 
-...
+To analyze the data, within RStudio simply load the script using `source("retentioneer.R")`.
 
-## Testing the script
-
-Within RStudio, simply load the script using `source("retentioneer.R")`.
-
-If all went well, it will run the following code at the bottom of the file:
+If all went well, it will run the following code at the bottom of the file to analyze the test data:
 
 `AnalyzeRetention("data/test-data.csv", cohort.units = "months")`
 
-... which will generate output the following retention table:
+Which will generate output the following retention table:
 
 ```
      cohort days.retained users.retained retention.rate
@@ -48,7 +44,7 @@ If all went well, it will run the following code at the bottom of the file:
 ...
 ```
 
-... and generate the following chart:
+And generate the following chart:
 
 ![retention chart by month](images/test-data-by-month.png)
 
@@ -69,6 +65,20 @@ If you'd prefer to see the average retention rate across all of the cohorts, you
 5             20            433       5.832435
 6             30            381       5.132004
 ```
+
+For any of these you can also adjust which days to analyze retention for by supplying a `days` argument like so (the default is 1, 5, 10, 20, 30, 40, 50, 60, 70, 80, and 90 days after the user was first seen):
+
+`AnalyzeRetention("data/test-data.csv", cohort.units = "months", days = c(10, 20, 30))`
+
+![retention data adjusted cohorts]test-data-10-20-30!
+
+You can also adjust the minimum number of users required for a chort to be plotted (the default is 20):
+
+`AnalyzeRetention("data/test-data.csv", cohort.units = "months", min.cohort.users = 50)`
+
+And hide the legend setting the `show.legend` argument to `FALSE` (default is `TRUE`):
+
+`AnalyzeRetention("data/test-data.csv", cohort.units = "months", show.legend = FALSE)`
 
 ![average retention rate](images/test-data-average.png)
 
