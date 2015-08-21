@@ -2,7 +2,7 @@ library("ggplot2")
 
 kSecondsPerDay <- 60 * 60 * 24
 
-AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
+AnalyzeRetention <- function(file, sep = ",", cohort.units = "months", days,
 	min.cohort.users = 20, show.legend = TRUE, avg.only = FALSE) {
 	# Analyzes a CSV file of user activities and plots the retention over time
 	#
@@ -10,7 +10,8 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units, days,
 	#   file: The location of the CSV file containing the user activity data.
 	#   sep: The separator used to separate the user id and date in the CSV file.
 	#     Default is ",".
-	#   cohort.units: How to determine the cohorts: "months" or "years"
+	#   cohort.units: How to determine the cohorts: "months" or "years". Default
+	#     is "months".
 	#   days: Which days to analyze retention for. Default is 1, 5, and then
 	#     every 10 days from 10 through 90 days after signup.
 	#   min.cohort.users: The minimum number of users who signed up in a cohort
@@ -260,7 +261,7 @@ PlotAverageRetention <- function(retention.data) {
 		aes(x = days.retained, y = retention.rate))
 	g <- g + geom_line(size = 1.5, color = "#5BB5E6")
 	g <- g + labs(x = "Days Retained", y = "Percentage Retained")
-	g <- g + ggtitle("Retention by Sign Up Cohort")
+	g <- g + ggtitle("Average Retention Rate")
 	g <- g + theme(plot.title = element_text(lineheight = 1.2, face = "bold",
 		size = rel(1.5)))
 	g <- g + theme(axis.ticks = element_blank())
@@ -272,5 +273,4 @@ PlotAverageRetention <- function(retention.data) {
 	print(g)
 }
 
-AnalyzeRetention("data/preceden-timestamps.csv", sep = "\t",
-	cohort.units = "months")
+AnalyzeRetention("data/test-data.csv", avg.only = TRUE)
