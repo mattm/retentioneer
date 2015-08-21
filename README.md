@@ -52,6 +52,10 @@ If your data spans multiple years, you can specify `years` for the `cohort.units
 
 `AnalyzeRetention("data/test-data.csv", cohort.units = "years")`
 
+By default, a user counts as retained if they were active _on or after_ a specific date (the `method` argument is set to `on-or-after` by default). If you'd prefer users only count as retained if they were active _on_ a specific date, set `method = "on"`:
+
+`AnalyzeRetention("data/test-data.csv", cohort.units = "months", method = "on")`
+
 If you'd prefer to see the average retention rate across all of the cohorts, you can pass an `avg.only` argument set to `TRUE`.
 
 `AnalyzeRetention("data/test-data.csv", avg.only = TRUE)`
@@ -67,10 +71,6 @@ If you'd prefer to see the average retention rate across all of the cohorts, you
 ```
 
 ![retention chart by month](images/test-data-average.png)
-
-By default, a user counts as retained if they were active _on or after_ a specific date (the `method` argument is set to `on-or-after` by default). If you'd prefer users only count as retained if they were active _on_ a specific date, set `method = "on"`:
-
-`AnalyzeRetention("data/test-data.csv", cohort.units = "months", method = "on")`
 
 You can also adjust the minimum number of users required for a chort to be plotted (the default is 20):
 
