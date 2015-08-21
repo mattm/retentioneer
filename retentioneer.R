@@ -2,8 +2,12 @@ library("ggplot2")
 
 kSecondsPerDay <- 60 * 60 * 24
 
-AnalyzeRetention <- function(file, sep = ",", cohort.units = "months", days,
-	min.cohort.users = 20, show.legend = TRUE, avg.only = FALSE) {
+# These are the days we want to measure the retention for
+days <- c(1, 3, 7, 14, 30, 60, 90)
+
+AnalyzeRetention <- function(file, sep = ",", cohort.units = "months",
+	min.cohort.users = 20, method = "on-or-after", show.legend = TRUE,
+	avg.only = FALSE) {
 	# Analyzes a CSV file of user activities and plots the retention over time
 	#
 	# Args:
@@ -12,8 +16,10 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units = "months", days,
 	#     Default is ",".
 	#   cohort.units: How to determine the cohorts: "months" or "years". Default
 	#     is "months".
-	#   days: Which days to analyze retention for. Default is 1, 5, and then
-	#     every 10 days from 10 through 90 days after signup.
+	#   method: How to determine whether a user was retained for n-days. If set
+	#     to "on", a user will have to have been active on a specific date. If
+	#     set to "on-or-after" the user is retained if they're active on or after
+	#     a specific date. Default is "on-or-after".
 	#   min.cohort.users: The minimum number of users who signed up in a cohort
 	#     in order to display it in the plot. Default is 20.
 	#   show.legend: Whether to show a legend on the plot. Default is TRUE.
@@ -23,10 +29,8 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units = "months", days,
 		stop("cohort.units must be months or years")
 	}
 
-	# These are the days we want to measure the retention for
-	# We set it here instead of in the argument simply due to its length
-	if (missing(days)) {
-		days <- c(1, 5, seq(10, 90, by = 10))
+	if (! method %in% c("on", "on-or-after")) {
+		stop("method must be 'on' or 'on-or-after'")
 	}
 
 	# Ensure we include the zero day retention counts which are needed to
@@ -96,7 +100,13 @@ AnalyzeRetention <- function(file, sep = ",", cohort.units = "months", days,
 		for (signup.user.id in signup.user.ids) {
 			days.retained <- GetDaysRetained(signup.user.id, possible.activities)
 			for (day in days) {
-				if (any(days.retained >= day)) {
+				if (method == "on") {
+					was.retained = any(days.retained == day)
+				} else if (method == "on-or-after") {
+					was.retained = any(days.retained >= day)
+				}
+
+				if (was.retained) {
 					key <- DayToKey(day)
 					retention.counts[[key]] <- retention.counts[[key]] + 1
 				}
@@ -233,9 +243,10 @@ PlotRetentionByCohort <- function(retention.data, show.legend) {
 	#   show.legend: Whether or not to show a legend on the plot.
 	g <- ggplot(retention.data,
 		aes(x = days.retained, y = retention.rate, group = cohort, color = cohort))
+	g <- g + scale_x_continuous(breaks = days)
 	g <- g + geom_line(size = 1.5)
-	g <- g + labs(x = "Days Retained", y = "Percentage Retained")
-	g <- g + ggtitle("Retention by Sign Up Cohort")
+	g <- g + labs(x = "Days Since Sign Up", y = "Percentage of Users Still Active")
+	g <- g + ggtitle("Retention Curve by Sign Up Cohort")
 	g <- g + theme(plot.title = element_text(lineheight = 1.2, face = "bold",
 		size = rel(1.5)))
 	g <- g + theme(axis.ticks = element_blank())
@@ -259,9 +270,10 @@ PlotAverageRetention <- function(retention.data) {
 	#   retention.data: A data frame containing days.retained and retention.rate
 	g <- ggplot(retention.data,
 		aes(x = days.retained, y = retention.rate))
+	g <- g + scale_x_continuous(breaks = days)
 	g <- g + geom_line(size = 1.5, color = "#5BB5E6")
-	g <- g + labs(x = "Days Retained", y = "Percentage Retained")
-	g <- g + ggtitle("Average Retention Rate")
+	g <- g + labs(x = "Days Since Sign Up", y = "Percentage of Users Still Active")
+	g <- g + ggtitle("Retention Curve")
 	g <- g + theme(plot.title = element_text(lineheight = 1.2, face = "bold",
 		size = rel(1.5)))
 	g <- g + theme(axis.ticks = element_blank())
