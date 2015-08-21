@@ -66,13 +66,13 @@ If you'd prefer to see the average retention rate across all of the cohorts, you
 6             30            381       5.132004
 ```
 
-![retention chart by month](images/test-data-average.png)!
+![retention chart by month](images/test-data-average.png)
 
 For any of these you can also adjust which days to analyze retention for by supplying a `days` argument like so (the default is 1, 5, 10, 20, 30, 40, 50, 60, 70, 80, and 90 days after the user was first seen):
 
 `AnalyzeRetention("data/test-data.csv", cohort.units = "months", days = c(10, 20, 30))`
 
-![retention data adjusted cohorts](images/test-data-10-20-30.png)!
+![retention data adjusted cohorts](images/test-data-10-20-30.png)
 
 You can also adjust the minimum number of users required for a chort to be plotted (the default is 20):
 
@@ -82,7 +82,7 @@ And hide the legend setting the `show.legend` argument to `FALSE` (default is `T
 
 `AnalyzeRetention("data/test-data.csv", cohort.units = "months", show.legend = FALSE)`
 
-![average retention rate](images/test-data-average.png)!
+![average retention rate](images/test-data-average.png)
 
 ## Contact
 
