@@ -1,12 +1,12 @@
 # Retentioneer
 
-Retentioneer is an R script that enables you to analyze your app's retention rates broken down by signup cohort.
+If you run a web or mobile app, you might be interested to know how long your users remain active. For example, did the users who signed up last January stick around longer than those who signed up this January? This script helps you figure it out.
+
+# Installing R
 
 If you've never used R before, you'll need to [install R](https://cran.r-project.org/mirrors.html) and optionally download a tool like [RStudio](https://www.rstudio.com/products/rstudio/download/) to run this script. You'll also need to install the `ggplot2` package with `install.packages("ggplot2")` and use `setwd()` to change the working directory to match the location of this script.
 
 ## How it works
-
-If you run a web or mobile app, you might be interested to know how long your users remain active. For example, did the users who signed up last January stick around longer than those who signed up this January? This script helps you figure it out.
 
 In order for the script to work, all you need to do is to generate a CSV file containing a list of user ids and unix timestamps of when the users performed actions in your app.  Here's an example:
 
