@@ -82,8 +82,6 @@ And hide the legend setting the `show.legend` argument to `FALSE` (default is `T
 
 `AnalyzeRetention("data/test-data.csv", cohort.units = "months", show.legend = FALSE)`
 
-![average retention rate](images/test-data-average.png)
-
 ## Contact
 
 If you have any suggestions, find a bug, or just want to say hey drop me a note at [@mhmazur](https://twitter.com/mhmazur) on Twitter or by email at matthew.h.mazur@gmail.com.
