@@ -16,7 +16,7 @@ The provided `data/test-data.csv` contains a test dataset that you can use to te
 
 ## Testing the script
 
-Within RStudio, simply load the script using `source("retention-analysis.R")`. If all went well, it should generate the following chart:
+Within RStudio, simply load the script using `source("retentioneer.R")`. If all went well, it should generate the following chart:
 
 ...
 
